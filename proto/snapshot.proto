@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package chronon;
+
+option go_package = "github.com/vflopes/chronon/gen;chrononpb";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/any.proto";
+import "parameter.proto";
+
+message Snapshot {
+    
+    string key = 1;
+    int64 sequence = 2;
+    google.protobuf.Timestamp timestamp = 3;
+    google.protobuf.Any payload =  4;
+
+}
+
+message SaveResponse {
+
+    bool replaced = 1;
+
+}
+
+message GetRequest {
+
+    string key = 1;
+
+    int64 stop_sequence = 2;
+
+    chronon.StopWhen stop_when = 3;
+
+}
+
+service SnapshotStore {
+    rpc Save(Snapshot) returns (SaveResponse) {}
+    rpc Get(GetRequest) returns (Snapshot) {}
+}

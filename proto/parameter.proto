@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package chronon;
+
+option go_package = "github.com/vflopes/chronon/gen;chrononpb";
+    
+enum StopWhen {
+    STOP_WHEN_LATEST= 0;
+    STOP_WHEN_EXACT_OR_PREVIOUS = 1;
+}

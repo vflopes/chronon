@@ -1,0 +1,83 @@
+syntax = "proto3";
+
+package chronon;
+
+option go_package = "github.com/vflopes/chronon/gen;chrononpb";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/any.proto";
+import "parameter.proto";
+
+message Event {
+    
+    string key = 1;
+    int64 sequence = 2;
+    google.protobuf.Timestamp timestamp = 3;
+    google.protobuf.Any payload =  4;
+
+}
+
+message AppendRequest {
+
+    string key = 1;
+
+    repeated Event events = 2;
+
+}
+
+message AppendResponse {
+
+    int64 appended_count = 1;
+
+    int64 latest_sequence = 2;
+    google.protobuf.Timestamp latest_timestamp = 3;
+
+}
+
+message ScanRequest {
+
+    string key = 1;
+
+    int64 start_sequence = 2;
+    int64 stop_sequence = 3;
+
+    chronon.StopWhen stop_when = 4;
+
+}
+
+message SeekTimestampRequest {
+
+    string key = 1;
+
+    google.protobuf.Timestamp exact_or_previous_timestamp = 2;
+
+}
+
+message SeekTimestampResponse {
+
+    int64 latest_sequence = 1;
+    google.protobuf.Timestamp latest_timestamp = 2;
+
+    int64 found_sequence = 3;
+    google.protobuf.Timestamp found_timestamp = 4;
+
+}
+
+service EventStore {
+    rpc Append(AppendRequest) returns (AppendResponse) {}
+    rpc Scan(ScanRequest) returns (stream Event) {}
+    rpc SeekTimestamp(SeekTimestampRequest) returns (SeekTimestampResponse) {}
+}
+
+message StreamRequest {
+
+}
+
+message WatchRequest {
+
+}
+
+service EventBus {
+    rpc Stream(StreamRequest) returns (stream Event) {}
+    rpc Watch(WatchRequest) returns (stream Event) {}
+}
