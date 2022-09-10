@@ -5,15 +5,12 @@ package chronon;
 option go_package = "github.com/vflopes/chronon/gen;chrononpb";
 
 message StoreConfiguration {
-    string address = 1;
-    string name = 2;
 
     message Postgres {
         string connection_string = 1;
-        string event_table = 2;
-        string source_table = 3;
-        string snapshot_table = 4;
-        int64 scan_batch_size = 5;
+        string events_table = 2;
+        string snapshots_table = 3;
+        int64 scan_batch_size = 4;
     }
 
     message Redis {
@@ -29,27 +26,5 @@ message StoreConfiguration {
 
     message DynamoDB {
     }
-
-    oneof event_store {
-        Postgres postgres_events = 3;
-        InfluxDB influxdb_events = 5;
-        Redis redis_events = 7;
-        DynamoDB dynamodb_events = 9;
-    }
-
-    oneof snapshot_store {
-        Postgres postgres_snapshots = 4;
-        InfluxDB influxdb_snapshots = 6;
-        Redis redis_snapshots = 8;
-        DynamoDB dynamodb_snapshots = 10;
-    }
-
-}
-
-message InfluxDBPoint {
-
-    string measurement = 1;
-    map<string, string> tags = 2;
-
 
 }
