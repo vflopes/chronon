@@ -1,18 +1,37 @@
 # Use postgres/example user/password credentials
-version: '3.1'
+version: '3.8'
 
 services:
 
   db:
     image: postgres
-    restart: always
     environment:
       POSTGRES_PASSWORD: example
+    volumes:
+      - ./event/store/postgres/schema.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - 5432:5432
 
-  adminer:
+  dbadmin:
     image: adminer
-    restart: always
     ports:
       - 8080:8080
+
+  store:
+    image: chronon
+    ports:
+      - 57755:57755
+    command:
+      - store
+      - postgres
+      - --listenAddr=0.0.0.0:57755
+      - --postgresConnectionString=postgres://postgres:example@db:5432/postgres?sslmode=disable
+
+  storeadmin:
+    image: fullstorydev/grpcui
+    ports:
+      - 58080:8080
+    command:
+      - -plaintext
+      - -use-reflection
+      - store:57755
